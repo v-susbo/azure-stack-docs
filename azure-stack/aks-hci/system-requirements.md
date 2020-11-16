@@ -8,9 +8,9 @@ ms.date: 09/22/2020
 ---
 # System requirements for Azure Kubernetes Service on Azure Stack HCI
 
-> Applies to: Azure Stack HCI
+> Applies to: Azure Stack HCI, Windows Server 2019 Datacenter
 
-This article covers the requirements for setting up Azure Kubernetes Service on Azure Stack HCI and using it to create Kubernetes clusters. For an overview of Azure Kubernetes Service on Azure Stack HCI, see [AKS on Azure Stack HCI overview](overview.md).
+This article covers the requirements for setting up Azure Kubernetes Service on Azure Stack HCI or on Windows Server 2019 Datacenter and using it to create Kubernetes clusters. For an overview of Azure Kubernetes Service on Azure Stack HCI, see [AKS on Azure Stack HCI overview](overview.md). 
 
 ## Determine hardware requirements
 
@@ -18,13 +18,13 @@ Microsoft recommends purchasing a validated Azure Stack HCI hardware/software so
 
 ### General requirements
 
-For Azure Kubernetes Service on Azure Stack HCI to function optimally in an Active Directory environment, ensure the following requirements are fulfilled: 
+For Azure Kubernetes Service on Azure Stack HCI or Windows Server 2019 Datacenter to function optimally in an Active Directory environment, ensure the following requirements are fulfilled: 
 
- - Ensure time synchronization is setup and the divergence is not greater than 2 minutes across all cluster nodes and the domain controller. For information on setting time synchronization visit [Windows Time Service](/windows-server/networking/windows-time-service/windows-time-service-top). 
+ - Ensure time synchronization is setup and the divergence is not greater than 2 minutes across all cluster nodes and the domain controller. For information on setting time synchronization visit [Windows time service](/windows-server/networking/windows-time-service/windows-time-service-top). 
 
- - Ensure that the user account(s) adding, updating, and managing Azure Kubernetes Service on Azure Stack HCI clusters have the correct permissions in Active Directory. If you are using Organizational Units (OUs) to manage group policies for servers and services, the user account(s) will require list, read, modify, and delete permissions on all objects in the OU. 
+ - Ensure that the user account(s) adding, updating, and managing Azure Kubernetes Service on Azure Stack HCI or Windows Server 2019 Datacenter clusters have the correct permissions in Active Directory. If you are using Organizational Units (OUs) to manage group policies for servers and services, the user account(s) will require list, read, modify, and delete permissions on all objects in the OU. 
 
- - We recommend using a separate OU for the servers and services you add your Azure Kubernetes Service on Azure Stack HCI clusters to. This will allow you to control access and permissions with more granularity.
+ - We recommend using a separate OU for the servers and services you add your Azure Kubernetes Service on Azure Stack HCI or Windows Server 2019 Datacenter clusters to. This will allow you to control access and permissions with more granularity.
 
  - If you are using GPO templates on containers in Active Directory, ensure deploying AKS-HCI is exempt from that policy. Server hardening will be available in a subsequent preview release.
 
@@ -32,7 +32,7 @@ For Azure Kubernetes Service on Azure Stack HCI to function optimally in an Acti
 
  - An Azure Stack HCI cluster with a maximum of four servers in the cluster. We recommend that each server in the cluster have at least 24 CPU cores and at least 512 GB RAM.
 
- - While you can technically run Azure Kubernetes Service on a single node Azure Stack HCI Server, we do not recommend doing so.
+ - While you can technically run Azure Kubernetes Service on a single node Windows Server 2019 Datacenter, we do not recommend doing so. However, you may run AKS on a single node Windows Server 2019 Datacenter for evaluation purposes.
 
  - Other compute requirements for Azure Kubernetes Service on Azure Stack HCI are in line with Azure Stack HCI’s requirements. Visit [Azure Stack HCI system requirements](../hci/concepts/system-requirements.md#server-requirements) for more details on Azure Stack HCI server requirements.
 
@@ -40,21 +40,21 @@ For Azure Kubernetes Service on Azure Stack HCI to function optimally in an Acti
 
 ### Network requirements 
 
-Azure Kubernetes Service on Azure Stack HCI requires a reliable high-bandwidth, low-latency network connection between each server node. You should verify the following: 
+AKS-HCI requires a reliable high-bandwidth, low-latency network connection between each server node. The following requirements apply to an Azure Stack HCI cluster as well as a Windows Server 2019 Datacenter failover cluster:
 
  - Verify that you have an existing, external virtual switch configured if you’re using Windows Admin Center. For Azure Stack HCI clusters, this switch must be the same across all cluster nodes. 
 
  - Verify that you have disabled IPv6 on all network adapters. 
 
  - The network must have an available DHCP server to provide TCP/IP addresses to the VMs and VM hosts. The DHCP server should also contain NTP and DNS host information. 
-
+ 
  - We also recommend having a DHCP server with a dedicated scope of IPv4 addresses accessible by the Azure Stack HCI cluster. For example, you can reserve 10.0.1.1 for the default gateway, 10.0.1.2 to 10.0.1.102 for Kubernetes services and use 10.0.1.103-10.0.1.254 for Kubernetes cluster VMs. 
 
- - The IPv4 addresses provided by the DHCP server should be routable and have a 7-day lease expiration to avoid loss of IP connectivity in case of VM update or reprovisioning.  
+ - The IPv4 addresses provided by the DHCP server should be routable and have a 7-day lease expiration to avoid loss of IP connectivity in case of VM update or reprovisioning.
+ 
+ - We don't recommend to have VLAN tags. Use access or untagged ports on your Azure Stack HCI cluster network switches.
 
- - We don't recommend to have VLAN tags. Use access or untagged ports on your Azure Stack HCI cluster network switches. 
-
- - We don't recommend to use a dedicated static virtual IP pool for the load balancer virtual IP pool during setup. The DHCP IP pool is used for the virtual machines whereas the virtual IP pool is used for the load balancer, and needs to be routable. The DHCP IP pool does not need to be routable to the external internet.
+ - We don't recommend using a dedicated static virtual IP pool for the load balancer virtual IP pool during setup. The DHCP IP pool is used for the virtual machines whereas the virtual IP pool is used for the load balancer, and needs to be routable. The DHCP IP pool does not need to be routable to the external internet.
 
  - DNS name resolution is required for all nodes to be able to communicate with each other. For Kubernetes external name resolution, we use the DNS servers provided by the DHCP server when the IP address is obtained. For Kubernetes internal name resolution, we use the default Kubernetes core DNS based solution. 
 
@@ -92,7 +92,8 @@ The following storage implementations are supported by Azure Kubernetes Service 
 |  Name                         | Storage Type | Required Capacity |
 | ---------------------------- | ------------ | ----------------- |
 | Azure Stack HCI Cluster          | CSV          | 1 TB              |
-| Single Node Azure Stack HCI | Direct Attached Storage | 500 GB|
+| Windows Server 2019 Datacenter failover cluster | CSV | 1 TB
+| Single Node Windows Server 2019 Datacenter | Direct Attached Storage | 500 GB
 
 ### Review maximum supported hardware specifications 
 
@@ -110,15 +111,15 @@ Windows Admin Center is the user interface for creating and managing Azure Kuber
 
 #### On your Windows Admin Center system
 
-The machine running the Windows Admin Center gateway must: 
+Your machine running the Windows Admin Center gateway has the following requirements:
 
- - Windows 10 (we don't support Windows Admin Center servers right now)
- - 60 GB of free space
- - Registered with Azure
- - In the same domain as the Azure Stack HCI cluster
+- A Windows 10 or Windows Server machine (we don't support running Windows Admin Center on the Azure Stack HCI or Windows Server 2019 Datacenter cluster right now)
+- 60 GB of free space
+- Registered with Azure
+- In the same domain as the Azure Stack HCI or Windows Server 2019 Datacenter cluster
 
 ## Next steps 
 
-After you have satisfied all of the prerequisites above, you can set up a Azure Kubernetes Service host on Azure Stack HCI using:
+After you have satisfied all of the prerequisites above, you can set up an Azure Kubernetes Service host on Azure Stack HCI or Windows Server 2019 Datacenter using:
  - [Windows Admin Center](setup.md)
  - [PowerShell](setup-powershell.md)
