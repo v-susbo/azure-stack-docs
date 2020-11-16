@@ -97,12 +97,13 @@ The following sections summarize what you need to run Azure Kubernetes Service o
 
 ### On your Windows Admin Center system
 
-Your Windows Admin Center management system has the following requirements:
+Your machine running the Windows Admin Center gateway has the following requirements:
 
-- A Windows 10 or Windows Server machine to run Windows Admin Center (we don't support running Windows Admin Center on the Azure Stack HCI or Windows Server 2019 Datacenter cluster right now)
+- A Windows 10 or Windows Server machine (we don't support running Windows Admin Center on the Azure Stack HCI or Windows Server 2019 Datacenter cluster right now)
 - 60 GB of free space
 - Registered with Azure
 - In the same domain as the Azure Stack HCI or Windows Server 2019 Datacenter cluster
+
 
 ### On the Azure Stack HCI cluster that hosts Azure Kubernetes Service
 
