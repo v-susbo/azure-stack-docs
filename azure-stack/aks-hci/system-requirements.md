@@ -40,7 +40,7 @@ For Azure Kubernetes Service on Azure Stack HCI or Windows Server 2019 Datacente
 
 ### Network requirements 
 
-AKS-HCI requires a reliable high-bandwidth, low-latency network connection between each server node. The following requirements apply to an Azure Stack HCI cluster as well as a Windows Server 2019 Datacenter failover cluster:
+The following requirements apply to an Azure Stack HCI cluster as well as a Windows Server 2019 Datacenter failover cluster:
 
  - Verify that you have an existing, external virtual switch configured if you’re using Windows Admin Center. For Azure Stack HCI clusters, this switch must be the same across all cluster nodes. 
 
@@ -48,13 +48,13 @@ AKS-HCI requires a reliable high-bandwidth, low-latency network connection betwe
 
  - The network must have an available DHCP server to provide TCP/IP addresses to the VMs and VM hosts. The DHCP server should also contain NTP and DNS host information. 
  
- - We also recommend having a DHCP server with a dedicated scope of IPv4 addresses accessible by the Azure Stack HCI cluster. For example, you can reserve 10.0.1.1 for the default gateway, 10.0.1.2 to 10.0.1.102 for Kubernetes services and use 10.0.1.103-10.0.1.254 for Kubernetes cluster VMs. 
+ - We also recommend having a DHCP server with a dedicated scope of IPv4 addresses accessible by the Azure Stack HCI cluster. For example, you can reserve 10.0.1.1 for the default gateway, 10.0.1.2 to 10.0.1.102 for Kubernetes services (VIP pool, maybe mandatory?) and use 10.0.1.103-10.0.1.254 for Kubernetes cluster VMs. host access statement
 
  - The IPv4 addresses provided by the DHCP server should be routable and have a 7-day lease expiration to avoid loss of IP connectivity in case of VM update or reprovisioning.
  
  - We don't recommend to have VLAN tags. Use access or untagged ports on your Azure Stack HCI cluster network switches.
 
- - We don't recommend using a dedicated static virtual IP pool for the load balancer virtual IP pool during setup. The DHCP IP pool is used for the virtual machines whereas the virtual IP pool is used for the load balancer, and needs to be routable. The DHCP IP pool does not need to be routable to the external internet.
+ - We recommend using a dedicated static virtual IP pool for the load balancer virtual IP pool during setup. The DHCP IP pool is used for the virtual machines whereas the virtual IP pool is used for the load balancer, and needs to be routable. The DHCP IP pool needs to be routable to the external internet. pink mike 
 
  - DNS name resolution is required for all nodes to be able to communicate with each other. For Kubernetes external name resolution, we use the DNS servers provided by the DHCP server when the IP address is obtained. For Kubernetes internal name resolution, we use the default Kubernetes core DNS based solution. 
 
