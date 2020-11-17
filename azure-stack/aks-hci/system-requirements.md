@@ -30,7 +30,7 @@ For Azure Kubernetes Service on Azure Stack HCI or Windows Server 2019 Datacente
 
 ### Compute requirements
 
- - An Azure Stack HCI cluster with a maximum of four servers in the cluster. We recommend that each server in the cluster have at least 24 CPU cores and at least 512 GB RAM.
+ - An Azure Stack HCI cluster or a Windows Server 2019 Datacenter failover cluster with a maximum of four servers in the cluster. We recommend that each server in the cluster have at least 24 CPU cores and at least 256 GB RAM.
 
  - While you can technically run Azure Kubernetes Service on a single node Windows Server 2019 Datacenter, we do not recommend doing so. However, you may run AKS on a single node Windows Server 2019 Datacenter for evaluation purposes.
 
@@ -42,23 +42,23 @@ For Azure Kubernetes Service on Azure Stack HCI or Windows Server 2019 Datacente
 
 The following requirements apply to an Azure Stack HCI cluster as well as a Windows Server 2019 Datacenter failover cluster:
 
- - Verify that you have an existing, external virtual switch configured if you’re using Windows Admin Center. For Azure Stack HCI clusters, this switch must be the same across all cluster nodes. 
+ - Verify that you have an existing, external virtual switch configured if you’re using Windows Admin Center. For Azure Stack HCI clusters, this switch and its name must be the same across all cluster nodes. 
 
  - Verify that you have disabled IPv6 on all network adapters. 
 
  - The network must have an available DHCP server to provide TCP/IP addresses to the VMs and VM hosts. The DHCP server should also contain NTP and DNS host information. 
  
- - We also recommend having a DHCP server with a dedicated scope of IPv4 addresses accessible by the Azure Stack HCI cluster. For example, you can reserve 10.0.1.1 for the default gateway, 10.0.1.2 to 10.0.1.102 for Kubernetes services (VIP pool, maybe mandatory?) and use 10.0.1.103-10.0.1.254 for Kubernetes cluster VMs. host access statement
-
- - The IPv4 addresses provided by the DHCP server should be routable and have a 7-day lease expiration to avoid loss of IP connectivity in case of VM update or reprovisioning.
+ - We also recommend having a DHCP server with a dedicated scope of IPv4 addresses accessible by the Azure Stack HCI cluster. For example, you can reserve 10.0.1.1 for the default gateway, 10.0.1.2 to 10.0.1.102 for Kubernetes services (using `vipPoolStartIp` & `vipPoolEndIp` in `Set-AksHciConfig`) and use 10.0.1.103-10.0.1.254 for Kubernetes cluster VMs. 
  
- - We don't recommend to have VLAN tags. Use access or untagged ports on your Azure Stack HCI cluster network switches.
-
- - We recommend using a dedicated static virtual IP pool for the load balancer virtual IP pool during setup. The DHCP IP pool is used for the virtual machines whereas the virtual IP pool is used for the load balancer, and needs to be routable. The DHCP IP pool needs to be routable to the external internet. pink mike 
-
+ - For a successful deployment, the Azure Stack HCI cluster nodes and the Kubernetes cluster VMs must have external internet connectivity. 
+ 
+ - The IPv4 addresses provided by the DHCP server should be routable and have a 30-day lease expiration to avoid loss of IP connectivity in case of VM update or reprovisioning.
+ 
  - DNS name resolution is required for all nodes to be able to communicate with each other. For Kubernetes external name resolution, we use the DNS servers provided by the DHCP server when the IP address is obtained. For Kubernetes internal name resolution, we use the default Kubernetes core DNS based solution. 
+ 
+ - For this preview release, we only provide single VLAN support for the entire deployment.
 
- - For this preview release, we don't support using a proxy server to connect the Windows Admin Center, Azure Stack HCI cluster nodes, and the Azure Kubernetes Service on Azure Stack HCI cluster nodes to the internet.
+ - For this preview release, we have proxy support thats limited to the following scenarios:
 
 ### Network port and URL requirements 
 
