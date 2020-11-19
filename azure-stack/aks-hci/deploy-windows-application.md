@@ -1,6 +1,6 @@
 ---
-title: Tutorial - Deploy a Windows application in AKS on Azure Stack HCI and configure gMSA on a Windows node
-description: In this tutorial, you deploy a Windows application to your cluster using a custom image stored in Azure Container Registry. You will also learn how to 
+title: Tutorial - Deploy a Windows application and join Windows nodes to Active Directory
+description: In this tutorial, you deploy a Windows application to your cluster using a custom image stored in Azure Container Registry. You will also learn how to join a Windows nodes to an Active Directory domain.
 author: abha
 ms.topic: tutorial
 ms.date: 09/22/2020
