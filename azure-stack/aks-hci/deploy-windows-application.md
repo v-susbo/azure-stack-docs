@@ -1,6 +1,6 @@
 ---
-title: Tutorial - Deploy a Windows application in AKS on Azure Stack HCI
-description: In this tutorial, you deploy a Windows application to your cluster using a custom image stored in Azure Container Registry.
+title: Tutorial - Deploy a Windows application in AKS on Azure Stack HCI and configure gMSA on a Windows node
+description: In this tutorial, you deploy a Windows application to your cluster using a custom image stored in Azure Container Registry. You will also learn how to 
 author: abha
 ms.topic: tutorial
 ms.date: 09/22/2020
@@ -142,7 +142,30 @@ Run `kubectl get pods` again to verify that additional pods have been created. A
 kubectl get pods -n default
 ```
 
+## Prepare Windows nodes for group Managed Service Account support on Windows nodes
+
+Group Managed Service Accounts are a specific type of Active Directory account that provides automatic password management, simplified service principal name (SPN) management, and the ability to delegate the management to other administrators across multiple servers. To configure group Managed Service Accounts (gMSA) for pods and containers that will run on your Windows nodes, you first have to join your Windows nodes to an Active Directory domain.
+
+To join your Windows worker nodes to a domain, log in to a Windows worker node, by running `kubectl get` and noting the `EXTERNAL-IP` value.
+
+```PowerShell
+kubectl get nodes -o wide
+``` 
+
+You can then SSH into the node using `ssh Administrator@ip`. 
+
+After you've successfully logged in to your Windows worker node, run the following PowerShell command to join the node to a domain. You'll be prompted to enter your **domain administrator account** credentials. You can also use elevated user credentials that have been given rights to join computers to the given domain. You'll then need to reboot your Windows worker node.
+
+```PowerShell
+add-computer --domainame "YourDomainName" -restart
+```
+
+Once all Windows worker nodes have been joined to a domain, follow the steps detailed at [configuring gMSA](https://kubernetes.io/docs/tasks/configure-pod-container/configure-gmsa) to apply the Kubernetes gMSA custom resource definitions and webhooks on your Kubernetes cluster.
+
+For more information on Windows container with gMSA, refer [Windows containers and gMSA](/virtualization/windowscontainers/manage-containers/manage-serviceaccounts). 
+
+
 ## Next steps
 
 * [Use Azure Monitor to monitor your cluster and application](/azure/azure-monitor/insights/container-insights-enable-arc-enabled-clusters).
-* [Use persistent storage and configure gMSA support in a Windows container](persistent-storage-windows-nodes.md).
+* [Use persistent storage on a Kubernetes cluster](persistent-storage.md).
