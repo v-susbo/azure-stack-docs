@@ -272,7 +272,7 @@ To find the SID associated with another account, open PowerShell as an administr
 (New-Object System.Security.Principal.NTAccount(<CONTOSO\Bob>)).Translate([System.Security.Principal.SecurityIdentifier]).value
 ```
 
-## Troubleshooting (certificates)
+## Troubleshoot certificates
 
 The webhook and the API server use certificates to mutually validate the TLS connection. This certificate expires in 500 days. To verify that the certificate has expired, view the logs from an `ad-auth-webhook` container:
 
